@@ -25,23 +25,36 @@ func (node *Node) InsertKeyAndChild(key *Key, child *Node) {
 }
 
 func (node *Node) InsertKeyAtIndex(index int, key *Key) {
-  arr := make([]*Key, len(node.keys) + 1)
+  /*arr := make([]*Key, len(node.keys) + 1)
   copy(arr[:], append(node.keys[:index], append([]*Key{key}, node.keys[index:]...)...))
-  node.keys = arr
+  node.keys = arr*/
+  node.keys = append(make([]*Key, 0), append(node.keys[:index], append([]*Key{key}, node.keys[index:]...)...)...)
 }
 
 func (node *Node) InsertChildAtIndex(index int, child *Node) {
-  arr := make([]*Node, len(node.children) + 1)
+  /*arr := make([]*Node, len(node.children) + 1)
   copy(arr, append(node.children[:index], append([]*Node{child}, node.children[index:]...)...))
-  node.children = arr
+  node.children = arr*/
+  node.children = append(make([]*Node, 0), append(node.children[:index], append([]*Node{child}, node.children[index:]...)...)...)
 }
 
 func (node *Node) FindTargetIndex(index int) (targetIndex int) {
   targetIndex = 0
 
-  for i, key := range node.keys {
+  /*for i, key := range node.keys {
     if (index > key.Key) {
       targetIndex = i + 1
+    }
+  }*/
+  for i := 0; i < len(node.keys); i++ {
+    if index > node.keys[i].Key {
+      targetIndex = i+1
+    }
+
+    endInd := len(node.keys) - (i+1)
+    if index > node.keys[endInd].Key {
+       targetIndex = endInd + 1
+       break
     }
   }
 

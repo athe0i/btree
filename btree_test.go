@@ -47,12 +47,13 @@ func BenchmarkBTreeAdd(b *testing.B) {
 }
 
 func BenchmarkBTreeSearch(b *testing.B) {
-    testSet, btree := initBench(20, b.N)
+  b.N = 5000000
+  testSet, btree := initBench(50, b.N)
 
-    b.ResetTimer()
-    for i := 0; i < b.N; i++ {
-      btree.Find(testSet[i])
-    }
+  b.ResetTimer()
+  for i := 0; i < b.N; i++ {
+    btree.Find(testSet[i])
+  }
 }
 
 func initBench(order, n int) (testSet []int, btree BTree) {
