@@ -25,27 +25,24 @@ func (node *Node) InsertKeyAndChild(key *Key, child *Node) {
 }
 
 func (node *Node) InsertKeyAtIndex(index int, key *Key) {
-  /*arr := make([]*Key, len(node.keys) + 1)
-  copy(arr[:], append(node.keys[:index], append([]*Key{key}, node.keys[index:]...)...))
-  node.keys = arr*/
-  node.keys = append(make([]*Key, 0), append(node.keys[:index], append([]*Key{key}, node.keys[index:]...)...)...)
+  newKeys := make([]*Key, 0, len(node.keys) + 1)
+  newKeys = append(newKeys, node.keys[:index]...)
+  newKeys = append(newKeys, key)
+  newKeys = append(newKeys, node.keys[index:]...)
+  node.keys = newKeys
 }
 
 func (node *Node) InsertChildAtIndex(index int, child *Node) {
-  /*arr := make([]*Node, len(node.children) + 1)
-  copy(arr, append(node.children[:index], append([]*Node{child}, node.children[index:]...)...))
-  node.children = arr*/
-  node.children = append(make([]*Node, 0), append(node.children[:index], append([]*Node{child}, node.children[index:]...)...)...)
+  newChildren := make([]*Node, 0, len(node.children))
+  newChildren = append(newChildren, node.children[:index]...)
+  newChildren = append(newChildren, child)
+  newChildren = append(newChildren, node.children[index:]...)
+  node.children = newChildren
 }
 
 func (node *Node) FindTargetIndex(index int) (targetIndex int) {
   targetIndex = 0
 
-  /*for i, key := range node.keys {
-    if (index > key.Key) {
-      targetIndex = i + 1
-    }
-  }*/
   for i := 0; i < len(node.keys); i++ {
     if index > node.keys[i].Key {
       targetIndex = i+1
@@ -62,20 +59,23 @@ func (node *Node) FindTargetIndex(index int) (targetIndex int) {
 }
 
 func (node *Node) SearchKey(needle int) (key *Key) {
-  for i, nodeKey := range node.keys {
+  for i:=0;i<len(node.keys);i++ {
+    endInd := len(node.keys) - (i + 1)
+    if needle == node.keys[endInd].Key {
+      return node.keys[endInd]
+    }
+    if needle > node.keys[endInd].Key && len(node.children) > 0 {
+      return node.children[endInd+1].SearchKey(needle)
+    }
+
     // return if found
-    if nodeKey.Key == needle {
-      return nodeKey
+    if node.keys[i].Key == needle {
+      return node.keys[i]
     }
 
     // jump over key if we didn't reach the end
-    if needle > nodeKey.Key && i < len(node.keys) - 1  {
+    if needle > node.keys[i].Key && i < len(node.keys) - 1  {
       continue
-    }
-
-    // if we reach the end of current keys, but needle is bigger go into last child
-    if needle > nodeKey.Key && i == len(node.keys) - 1 && len(node.children) > 0 {
-      return node.children[i+1].SearchKey(needle)
     }
 
     if len(node.children) > 0 {
